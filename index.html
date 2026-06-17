@@ -212,6 +212,38 @@
         backdrop-filter: blur(8px);
         background: rgba(255, 248, 247, 0.9);
       }
+
+      /* Hamburger Menu Icon Animation */
+      .hamburger-icon {
+        width: 24px;
+        height: 18px;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .hamburger-line {
+        display: block;
+        width: 100%;
+        height: 2px;
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+      .hamburger-active .hamburger-line:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+      }
+      .hamburger-active .hamburger-line:nth-child(2) {
+        opacity: 0;
+      }
+      .hamburger-active .hamburger-line:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+      }
+
+      /* Mobile Menu Dropdown */
+      #mobile-menu.open {
+        transform: translateY(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
     </style>
   </head>
   <body
@@ -255,9 +287,62 @@
             >FAQ</a
           >
         </div>
-        <div class="flex items-center gap-sm">
+        <div class="hidden md:flex items-center gap-sm">
           <button
             class="bg-primary text-on-primary px-md py-sm rounded-lg font-bold hover:bg-opacity-90 active:scale-95 duration-150 transition-all shadow-md"
+          >
+            Get Quote
+          </button>
+        </div>
+        <!-- Hamburger Menu Button for Mobile -->
+        <button
+          id="mobile-menu-btn"
+          class="md:hidden flex items-center justify-center p-2 rounded-lg text-primary hover:bg-surface-container-low transition-colors focus:outline-none focus:ring-2 focus:ring-primary/55"
+          aria-expanded="false"
+          aria-controls="mobile-menu"
+          aria-label="Toggle navigation menu"
+        >
+          <div class="hamburger-icon" id="hamburger-icon">
+            <span class="hamburger-line bg-primary"></span>
+            <span class="hamburger-line bg-primary"></span>
+            <span class="hamburger-line bg-primary"></span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Mobile Dropdown Menu -->
+      <div
+        id="mobile-menu"
+        class="absolute left-0 right-0 top-full bg-background border-b border-outline-variant shadow-lg transform -translate-y-2 opacity-0 pointer-events-none transition-all duration-300 md:hidden flex flex-col px-margin py-md gap-md"
+      >
+        <a
+          class="text-primary font-bold border-b border-outline-variant/30 pb-sm text-lg"
+          href="#"
+          >Services</a
+        >
+        <a
+          class="text-on-surface-variant hover:text-primary pb-sm border-b border-outline-variant/30 text-lg transition-colors"
+          href="#"
+          >About Us</a
+        >
+        <a
+          class="text-on-surface-variant hover:text-primary pb-sm border-b border-outline-variant/30 text-lg transition-colors"
+          href="#"
+          >Portfolio</a
+        >
+        <a
+          class="text-on-surface-variant hover:text-primary pb-sm border-b border-outline-variant/30 text-lg transition-colors"
+          href="#"
+          >Process</a
+        >
+        <a
+          class="text-on-surface-variant hover:text-primary pb-sm border-b border-outline-variant/30 text-lg transition-colors"
+          href="#"
+          >FAQ</a
+        >
+        <div class="pt-sm">
+          <button
+            class="w-full bg-primary text-on-primary py-md rounded-lg font-bold hover:bg-opacity-90 active:scale-95 duration-150 transition-all shadow-md"
           >
             Get Quote
           </button>
@@ -1234,8 +1319,39 @@
         .querySelectorAll(".reveal")
         .forEach((el) => observer.observe(el));
 
-      // Simple script to handle banner infinite loop logic if needed,
-      // though CSS animation handles most of it.
+      // Mobile Navigation Menu Toggle
+      const mobileMenuBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+      const hamburgerIcon = document.getElementById("hamburger-icon");
+      const mobileMenuLinks = mobileMenu.querySelectorAll("a, button");
+
+      function toggleMenu() {
+        const isOpen = mobileMenu.classList.toggle("open");
+        hamburgerIcon.classList.toggle("hamburger-active", isOpen);
+        mobileMenuBtn.setAttribute("aria-expanded", isOpen);
+      }
+
+      mobileMenuBtn.addEventListener("click", toggleMenu);
+
+      // Close menu when a link or button is clicked
+      mobileMenuLinks.forEach((link) => {
+        link.addEventListener("click", () => {
+          if (mobileMenu.classList.contains("open")) {
+            toggleMenu();
+          }
+        });
+      });
+
+      // Close menu when clicking outside of the navbar
+      document.addEventListener("click", (e) => {
+        if (
+          mobileMenu.classList.contains("open") &&
+          !mobileMenuBtn.contains(e.target) &&
+          !mobileMenu.contains(e.target)
+        ) {
+          toggleMenu();
+        }
+      });
     </script>
   </body>
 </html>
